@@ -1,3 +1,4 @@
+import { SecondaryButton } from "./button"
 
 
 export const Hero = () => {
@@ -11,9 +12,16 @@ export const Hero = () => {
                 Revolution
             </span>
         </div>
-        <div className="flex justify-center pt-4">
+        <div className="flex justify-center pt-4 text-2xl text-slate-500">
             Create a frictionless wallet with just a Google Account.
+        </div>
+        <div className="flex justify-center pt-4 text-2xl text-slate-500">
             Convert your INR into Cryptocurrency
+        </div>
+        <div className="pt-4 flex justify-center">
+            <SecondaryButton onClick= {() => {
+                signIn("google");
+            }}> Login with Google</SecondaryButton>
         </div>
     </div>
 }

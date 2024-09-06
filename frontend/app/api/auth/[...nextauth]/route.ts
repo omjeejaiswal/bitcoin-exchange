@@ -18,9 +18,9 @@ const handler = NextAuth({
                     return false
                 }
 
-                const user 
+            
             }
-            return true
+            return false
         },
     }
 })

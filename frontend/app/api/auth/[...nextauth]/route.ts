@@ -29,7 +29,13 @@ const handler = NextAuth({
                 if(userDb) {
                     return true
                 }
-                // const keypair = Keypair
+
+                const keypair = Keypair.generate();
+                const publickey = keypair.publicKey.toBase58();
+                const privateKey = keypair.secretKey;
+                console.log(publickey);
+                console.log(privateKey);
+
                 await db.user.create({
                     data: {
                         username: email,
@@ -47,8 +53,7 @@ const handler = NextAuth({
                         }
                     }
                 })
-
-            
+                return true;
             }
             return false
         },

@@ -1,17 +1,22 @@
-"use client";
 
-import { useSession } from "next-auth/react"
+import { getServerSession } from "next-auth";
+import { ProfileCard } from "../componets/profileCard";
+import db from "@/app/db"
 
+function getBalance() {
+    const session = await getServerSession();
 
-export default function() {
-    const session = useSession();
-
-    return <div className="pt-8 flex justify-center">
-        <div className="max-w-4xl bg-white rounded shadow w-full p-12">
-            hi there
-        </div>
-    </div>
-
+    db.solWallet.findFirst({
+        where: {
+            userId: session?.uid
+        }
+    }) 
 }
 
+export default async function() {
 
+    return <div>
+
+        <ProfileCard/>
+    </div>
+}

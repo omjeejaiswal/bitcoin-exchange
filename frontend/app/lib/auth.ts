@@ -4,67 +4,79 @@ import GoogleProvider from "next-auth/providers/google";
 import db from "@/app/db";
 import { Keypair } from "@solana/web3.js";
 
-import { Session } from "next-auth";
-import { Session } from "inspector/promises";
-
+import { Session } from 'next-auth';
 
 export interface session extends Session {
     user: {
-        email: string;
-        name: string;
-        image: string;
-        uid: string;
+      email: string;
+      name: string;
+      image: string
+      uid: string;
     };
 }
-// sign up and login
+
+// signUp & login
 export const authConfig = {
+    secret: process.env.NEXTAUTH_SECRET || 'secr3t',
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID ?? "",
             clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? ""
-        }),
+        })
     ],
-    callbacks : {
-        session
-
-
-
-        async signIn({user, account, profile, email, credentials}) {
-            if(account?.provider === "google") {
+    callbacks: {
+        session: ({ session, token }: any): session => {
+            const newSession: session = session as session;
+            if (newSession.user && token.uid) {
+              // @ts-ignore
+              newSession.user.uid = token.uid ?? "";
+            }
+            return newSession!;
+        },
+        async jwt({ token, account, profile }: any) {
+            const user = await db.user.findFirst({
+                where: {
+                    sub: account?.providerAccountId ?? ""
+                }
+            })
+            if (user) {
+              token.uid = user.id
+            }
+            return token
+        },
+        async signIn({ user, account, profile, email, credentials }: any) {
+            if (account?.provider === "google") {
                 const email = user.email;
-                if(!email) {
+                if (!email) {
                     return false
                 }
 
-                console.log({user, account, profile, email, credentials})
                 const userDb = await db.user.findFirst({
                     where: {
                         username: email
                     }
                 })
 
-                if(userDb) {
-                    return true
+                if (userDb) {
+                    return true;
                 }
 
                 const keypair = Keypair.generate();
-                const publickey = keypair.publicKey.toBase58();
+                const publicKey = keypair.publicKey.toBase58();
                 const privateKey = keypair.secretKey;
-                console.log(publickey);
-                console.log(privateKey);
-
 
                 await db.user.create({
                     data: {
                         username: email,
                         name: profile?.name,
-                        // @ts-ignore
-                        profilePicture: profile?.picture, 
+                        //@ts-ignore
+                        profilePicture: profile?.picture,
                         provider: "Google",
+                        sub: account.providerAccountId,
                         solWallet: {
                             create: {
-                                publicKey: "",
-                                privateKey: ""
+                                publicKey: publicKey,
+                                privateKey: privateKey.toString()
                             }
                         },
                         inrWallet: {
@@ -74,15 +86,15 @@ export const authConfig = {
                         }
                     }
                 })
+
                 return true;
+
             }
+            
             return false
         },
     }
-})
-
-export {handler as GET, handler as POST}
-
+}
 
 
 

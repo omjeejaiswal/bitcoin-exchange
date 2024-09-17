@@ -4,7 +4,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 
-export const ProfileCard = () => {
+export const ProfileCard = ({publicKey} : {
+    publicKey: string
+}) => {
     const session = useSession();
     const router = useRouter();
     
@@ -27,7 +29,7 @@ export const ProfileCard = () => {
                 image= {session.data?.user?.image ?? ""} 
                 name={session.data?.user?.name ?? ""} />
 
-            <Assets />
+            <Assets publicKey={publicKey} />
 
         </div>
 
@@ -35,7 +37,9 @@ export const ProfileCard = () => {
 
 }
 
-function Assets() {
+function Assets({publicKey}: {
+    publicKey: string
+}) {
     return <div className="text-slate-500 mt-4">
         Account assets
     </div>

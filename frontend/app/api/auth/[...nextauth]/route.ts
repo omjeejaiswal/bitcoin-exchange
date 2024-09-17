@@ -20,6 +20,7 @@ const handler = NextAuth({
                     return false
                 }
 
+                console.log({user, account, profile, email, credentials})
                 const userDb = await db.user.findFirst({
                     where: {
                         username: email
@@ -36,9 +37,13 @@ const handler = NextAuth({
                 console.log(publickey);
                 console.log(privateKey);
 
+
                 await db.user.create({
                     data: {
                         username: email,
+                        name: profile?.name,
+                        // @ts-ignore
+                        profilePicture: profile?.picture, 
                         provider: "Google",
                         solWallet: {
                             create: {

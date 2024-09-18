@@ -2,6 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { PrimaryButton } from "./button";
+import { useEffect, useState } from "react";
 
 
 export const ProfileCard = ({publicKey} : {
@@ -40,8 +42,35 @@ export const ProfileCard = ({publicKey} : {
 function Assets({publicKey}: {
     publicKey: string
 }) {
+    const [copied, setCopied] = useState(false);
+
+    useEffect(() => {
+        if(copied) {
+            let timeout = setTimeout(() => {
+                setCopied(false)
+            }, 3000)
+            return() => {
+                clearTimeout(timeout);
+            }
+        }
+    })
+
     return <div className="text-slate-500 mt-4">
         Account assets
+        <br />
+
+        <div className="text-slate-500 mt-4">
+            <div>
+
+            </div>
+            <div>
+                <PrimaryButton onClick={() => {
+                    navigator.clipboard.writeText(publicKey)
+
+                    setCopied(true)
+                }}>{copied ? "Copied" : "Your wallet address"}</PrimaryButton>
+            </div>
+        </div>
     </div>
 }
 

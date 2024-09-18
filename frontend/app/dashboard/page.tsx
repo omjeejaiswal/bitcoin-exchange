@@ -13,7 +13,7 @@ async function getUserWallet() {
             userId: session?.user?.uid
         },
         select: {
-            privateKey: true
+            publicKey: true
         }
     }) 
     if(!userWallet) {
@@ -22,10 +22,10 @@ async function getUserWallet() {
         }
     }
 
-    return {error: null ,userWallet };
+    return {error: null, userWallet };
 }
 
-export default async function() {
+export default async function Dashboard() {
     const userWallet = await getUserWallet();
 
     if(userWallet.error || !userWallet.userWallet?.publicKey) {
@@ -33,7 +33,6 @@ export default async function() {
     }
 
     return <div>
-
         <ProfileCard publicKey= {userWallet.userWallet?.publicKey} />
     </div>
 }

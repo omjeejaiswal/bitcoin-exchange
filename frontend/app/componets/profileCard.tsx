@@ -59,9 +59,9 @@ function Assets({publicKey}: {
         Account assets
         <br />
 
-        <div className="text-slate-500 mt-4">
+        <div className="flex justify-between">
             <div>
-
+                
             </div>
             <div>
                 <PrimaryButton onClick={() => {

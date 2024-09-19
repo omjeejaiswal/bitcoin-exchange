@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { PrimaryButton } from "./button";
 import { useEffect, useState } from "react";
 import { useTokens } from "../api/hooks/useTokens";
+import { TokenList } from "./TokenList";
 
 
 export const ProfileCard = ({publicKey} : {publicKey: string}) => {
@@ -34,7 +35,6 @@ export const ProfileCard = ({publicKey} : {publicKey: string}) => {
             <Assets publicKey={publicKey} />
 
         </div>
-
     </div>
 
 }
@@ -72,7 +72,7 @@ function Assets({publicKey}: { publicKey: string }) {
                     USD
                 </div>
             </div>
-            
+
             <div>
                 <PrimaryButton onClick={() => {
                     navigator.clipboard.writeText(publicKey)
@@ -82,7 +82,8 @@ function Assets({publicKey}: { publicKey: string }) {
             </div>
         </div>
         <div>
-            {JSON.stringify(tokenBalances?.tokens)}
+            {/* {JSON.stringify(tokenBalances?.tokens)} */}
+            <TokenList tokens={tokenBalances?.tokens || []}/>
         </div>
     </div>
 }

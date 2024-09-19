@@ -18,7 +18,7 @@ async function getUserWallet() {
 
     if (!userWallet) {
         return {
-            error: "No solana wallet found associated to the user"
+            error: "no wallet found associated to the user"
         }
     }
     
@@ -29,6 +29,7 @@ export default async function Dashboard() {
     const userWallet = await getUserWallet();
 
     if (userWallet.error || !userWallet.userWallet?.publicKey) {
+        console.log(userWallet)
         return <>No solana wallet found</>
     }
 

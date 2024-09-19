@@ -11,11 +11,15 @@ export async function GET(req: NextRequest){
     // ata => associated token account
     // pda => program derived address
     
+    const tokens =  supportedTokens.map((token, index) => ({
+        ...token,
+        balance: balances[index],
+        usdBalance: balances[index] * Number(token.price)
+    }))
+
     return NextResponse.json({
-        tokens: supportedTokens.map((token, index) => ({
-            ...token,
-            balance: balances[index]
-        }))
+        tokens,
+        totalBalance: tokens.reduce((acc, val) => acc + val.usdBalance, 0) // val.usdBalance array into a sinlge number
     })
 }
 
@@ -26,6 +30,7 @@ async function getAccountBalance(token: {
 }, address: string) {
     if (token.native) {
         let balance = await connection.getBalance(new PublicKey(address));
+        console.log("balance is" + balance)
         return balance / LAMPORTS_PER_SOL;
     }
 

@@ -4,15 +4,14 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { PrimaryButton } from "./button";
 import { useEffect, useState } from "react";
+import { useTokens } from "../api/hooks/useTokens";
 
 
-export const ProfileCard = ({publicKey} : {
-    publicKey: string
-}) => {
+export const ProfileCard = ({publicKey} : {publicKey: string}) => {
     const session = useSession();
     const router = useRouter();
     
-
+    // Loading state for session
     if(session.status == "loading") {
         // ToDo: replace with a skeleton
         return <div>
@@ -20,13 +19,14 @@ export const ProfileCard = ({publicKey} : {
         </div>
     }
 
+    // if no user session is found, redirect to home
     if(!session.data?.user) {
         router.push("/")
         return null
     }
 
     return <div className="pt-8 flex justify-center">
-        <div className="max-w-4xl bg-white rounded shadow w-full p-12">
+        <div className="max-w-4xl bg-white rounded shadow w-full p-12 mx-auto">
             <Greeting 
                 image= {session.data?.user?.image ?? ""} 
                 name={session.data?.user?.name ?? ""} />
@@ -39,10 +39,9 @@ export const ProfileCard = ({publicKey} : {
 
 }
 
-function Assets({publicKey}: {
-    publicKey: string
-}) {
+function Assets({publicKey}: { publicKey: string }) {
     const [copied, setCopied] = useState(false);
+    const {tokenBalances, loading} = useTokens(publicKey);
 
     useEffect(() => {
         if(copied) {
@@ -53,23 +52,37 @@ function Assets({publicKey}: {
                 clearTimeout(timeout);
             }
         }
-    })
+    }, [copied])
+
+    if(loading) {
+        return "Loading..."
+    }
 
     return <div className="text-slate-500 mt-4">
         Account assets
         <br />
 
         <div className="flex justify-between">
-            <div>
-                
+            <div className="flex">
+                <div className="text-4xl font-bold text-black">
+                    ${tokenBalances?.totalBalance.toFixed(2) ?? "No balance aviable"}
+                </div>
+
+                <div className="font-slate-500 font-bold text-3xl flex flex-col justify-end pb-2 pl-2">
+                    USD
+                </div>
             </div>
+            
             <div>
                 <PrimaryButton onClick={() => {
                     navigator.clipboard.writeText(publicKey)
-
                     setCopied(true)
-                }}>{copied ? "Copied" : "Your wallet address"}</PrimaryButton>
+                }}>{copied ? "Copied" : "Your wallet address"}
+                </PrimaryButton>
             </div>
+        </div>
+        <div>
+            {JSON.stringify(tokenBalances?.tokens)}
         </div>
     </div>
 }

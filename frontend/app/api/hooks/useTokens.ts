@@ -1,4 +1,5 @@
-import { TokenDetails } from "@/app/lib/constants";
+
+import { TokenDetails } from "@/app/lib/Tokens";
 import axios from "axios";
 import { useEffect, useState } from "react"
 

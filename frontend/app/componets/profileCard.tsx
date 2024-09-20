@@ -50,7 +50,7 @@ export const ProfileCard = ({publicKey} : {
                 }}>{tab.name} </TabButton>)}
             </div>
             <div className={`${selectedtab === "tokens" ? "visible": "hidden" }`}> < Assets publicKey="{publicKey}" />: null</div>
-            <div className={`${selectedtab === "tokens" ? "visible": "hidden" }`}> < Swap publicKey="{publicKey}" />: null</div>
+            <div className={`${selectedtab === "swap" ? "visible": "hidden" }`}> < Swap publicKey="{publicKey}" />: null</div>
         </div>
 
     </div>

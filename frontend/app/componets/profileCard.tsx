@@ -2,15 +2,27 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { PrimaryButton } from "./button";
+import { PrimaryButton, TabButton } from "./button";
 import { useEffect, useState } from "react";
 import { useTokens } from "../api/hooks/useTokens";
 import { TokenList } from "./TokenList";
+import { Swap } from "./Swap";
 
+type Tab = "tokens" | "send" | "add_fund" | "swap" | "withdraw"
+const tabs: {id: Tab; name: string}[] = [
+    {id:"tokens", name: "Tokens"}, 
+    {id:"send", name: "Send"}, 
+    {id:"add_fund", name: "Add_fund"}, 
+    {id:"swap", name: "Swap"}, 
+    {id:"withdraw", name: "Withdraw"} 
+];
 
-export const ProfileCard = ({publicKey} : {publicKey: string}) => {
+export const ProfileCard = ({publicKey} : {
+    publicKey: string
+}) => {
     const session = useSession();
     const router = useRouter();
+    const [selectedtab, setSelectedTab] = useState<Tab>("tokens");
     
     // Loading state for session
     if(session.status == "loading") {
@@ -27,14 +39,20 @@ export const ProfileCard = ({publicKey} : {publicKey: string}) => {
     }
 
     return <div className="pt-8 flex justify-center">
-        <div className="max-w-4xl bg-white rounded shadow w-full p-12 mx-auto">
+        <div className="max-w-4xl bg-white rounded shadow w-full">
             <Greeting 
                 image= {session.data?.user?.image ?? ""} 
                 name={session.data?.user?.name ?? ""} />
-
-            <Assets publicKey={publicKey} />
-
+            
+            <div className="w-full flex px-10">
+                {tabs.map(tab => <TabButton active = {tab.id === selectedtab} onClick={() => {
+                    setSelectedTab(tab.id)
+                }}>{tab.name} </TabButton>)}
+            </div>
+            <div className={`${selectedtab === "tokens" ? "visible": "hidden" }`}> < Assets publicKey="{publicKey}" />: null</div>
+            <div className={`${selectedtab === "tokens" ? "visible": "hidden" }`}> < Swap publicKey="{publicKey}" />: null</div>
         </div>
+
     </div>
 
 }
@@ -58,14 +76,15 @@ function Assets({publicKey}: { publicKey: string }) {
         return "Loading..."
     }
 
-    return <div className="text-slate-500 mt-4">
-        Account assets
-        <br />
+    return <div className="text-slate-500 ">
+        <div className="mx-12 py-2">
+            Account assets
+        </div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between mx-12" >
             <div className="flex">
                 <div className="text-4xl font-bold text-black">
-                    ${tokenBalances?.totalBalance.toFixed(2) ?? "No balance aviable"}
+                    ${tokenBalances?.totalBalance ?? "No balance aviable"}
                 </div>
 
                 <div className="font-slate-500 font-bold text-3xl flex flex-col justify-end pb-2 pl-2">
@@ -81,7 +100,7 @@ function Assets({publicKey}: { publicKey: string }) {
                 </PrimaryButton>
             </div>
         </div>
-        <div>
+        <div className="pt-4 bg-slate-100 p-12 mt-4">  
             {/* {JSON.stringify(tokenBalances?.tokens)} */}
             <TokenList tokens={tokenBalances?.tokens || []}/>
         </div>
@@ -95,7 +114,7 @@ function Greeting({
 } : {
     image: string, name:string
 }) {
-    return <div className="flex">
+    return <div className="flex p-12">
         <img src={image} className="rounded-full w-16 h-16 mr-4" />
         <div className="text-xl font-bold flex flex-col jusiify-center">
             welcome back, {name}

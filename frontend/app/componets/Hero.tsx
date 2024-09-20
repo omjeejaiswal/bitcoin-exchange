@@ -25,7 +25,6 @@ export const Hero = () => {
             Convert your INR into Cryptocurrency
         </div>
         <div className="pt-8 flex justify-center">
-            
             {session.data?.user ? <SecondaryButton onClick= {() => {
                 router.push("/dashboard");
             }}> go to dashboard</SecondaryButton> : <SecondaryButton onClick= {() => {

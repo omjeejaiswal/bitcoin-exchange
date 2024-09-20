@@ -13,13 +13,13 @@ export async function GET(req: NextRequest){
     
     const tokens =  supportedTokens.map((token, index) => ({
         ...token,
-        balance: balances[index],
-        usdBalance: balances[index] * Number(token.price)
+        balance: balances[index].toFixed(2),
+        usdBalance: (balances[index] * Number(token.price)).toFixed(2)
     }))
 
     return NextResponse.json({
         tokens,
-        totalBalance: tokens.reduce((acc, val) => acc + val.usdBalance, 0) // val.usdBalance array into a sinlge number
+        totalBalance: tokens.reduce((acc, val) => acc + Number(val.usdBalance), 0).toFixed(2)// val.usdBalance array into a sinlge number
     })
 }
 
@@ -27,6 +27,7 @@ async function getAccountBalance(token: {
     name: string,
     mint: string,
     native: boolean;
+    
 }, address: string) {
     if (token.native) {
         let balance = await connection.getBalance(new PublicKey(address));

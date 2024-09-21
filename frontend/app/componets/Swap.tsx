@@ -1,10 +1,15 @@
 "use client";
 
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 import { SUPPORTED_TOKENS, TokenDetails } from "../lib/Tokens";
+import { TokenWithBalance } from "../api/hooks/useTokens";
 
-export function Swap({publicKey} : {
-    publicKey: string
+export function Swap({publicKey, tokenBalances} : {
+    publicKey: string;
+    tokenBalances: {
+        totalBalance: number,
+        tokens: TokenWithBalance[]
+    } | null;
 }) {
     const [baseAssest, setBaseAssest] = useState(SUPPORTED_TOKENS[0])
     const [quoteAssest, setQuoteAssest] = useState(SUPPORTED_TOKENS[1])
@@ -15,7 +20,9 @@ export function Swap({publicKey} : {
     </div>
         <SwapInputRow onSelect={(assest) => {
             setBaseAssest(assest)
-        }} selectedToken = {baseAssest} title={"You pay"} topBorderEnabled = {true} bottomBorderEnabled={false} />
+        }} selectedToken = {baseAssest} title={"You pay: "} topBorderEnabled = {true} bottomBorderEnabled={false}
+        subtitle= { <div className="text-slate-500 pt-1 text-sm pl-1 flex">
+            <div className="text-sm"> Current Balance: </div> <div> {tokenBalances?.tokens.find(x => x.name === baseAssest.name)?.balance} {baseAssest.name} </div> </div>}  />
 
         <div className="flex justify-center">
             <div onClick={() => {
@@ -30,7 +37,7 @@ export function Swap({publicKey} : {
 
         <SwapInputRow onSelect={(assest) => {
             setQuoteAssest(assest)
-        }} selectedToken = {quoteAssest} title = {"you receive"} topBorderEnabled = {false} bottomBorderEnabled={true} />
+        }} selectedToken = {quoteAssest} title = {"you receive: "} topBorderEnabled = {false} bottomBorderEnabled={true} />
     </div>
 }
 
@@ -38,13 +45,15 @@ function SwapInputRow({onSelect, selectedToken, title, subtitle, topBorderEnable
     onSelect: (asset: TokenDetails) => void
     selectedToken : TokenDetails;
     title: string;
-    subtitle?: string;
+    subtitle?: ReactNode;
     topBorderEnabled: boolean;
     bottomBorderEnabled: boolean;
 } ) {
     return <div className={`border flex justify-between p-4 ${topBorderEnabled ? "rounded-xl" : "" } ${bottomBorderEnabled ? "rounded-t-xl" : ""} `}>
         <div>
-            {title}
+            <div className="text-xs font-semibold md-1">
+                {title}
+            </div>
             <AssetSelector selectedToken={selectedToken} onSelect ={onSelect} />
             {subtitle}
         </div>

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { PrimaryButton, TabButton } from "./button";
 import { useEffect, useState } from "react";
-import { useTokens } from "../api/hooks/useTokens";
+import { TokenWithBalance, useTokens } from "../api/hooks/useTokens";
 import { TokenList } from "./TokenList";
 import { Swap } from "./Swap";
 
@@ -23,6 +23,7 @@ export const ProfileCard = ({publicKey} : {
     const session = useSession();
     const router = useRouter();
     const [selectedtab, setSelectedTab] = useState<Tab>("tokens");
+    const {tokenBalances, loading} = useTokens(publicKey);
     
     // Loading state for session
     if(session.status == "loading") {
@@ -49,17 +50,21 @@ export const ProfileCard = ({publicKey} : {
                     setSelectedTab(tab.id)
                 }}>{tab.name} </TabButton>)}
             </div>
-            <div className={`${selectedtab === "tokens" ? "visible": "hidden" }`}> < Assets publicKey="{publicKey}" />: null</div>
-            <div className={`${selectedtab === "swap" ? "visible": "hidden" }`}> < Swap publicKey="{publicKey}" />: null</div>
+            <div className={`${selectedtab === "tokens" ? "visible": "hidden" }`}> < Assets tokenBalances={tokenBalances} loading = {loading} publicKey="{publicKey}" />: null</div>
+            <div className={`${selectedtab === "swap" ? "visible": "hidden" }`}> < Swap tokenBalances={tokenBalances} loading = {loading} publicKey="{publicKey}" />: null</div>
         </div>
-
     </div>
-
 }
 
-function Assets({publicKey}: { publicKey: string }) {
+function Assets({publicKey, tokenBalances, loading}: {
+        publicKey: string;
+        tokenBalances: {
+            totalBalance: number,
+            tokens: TokenWithBalance[]
+        } | null;
+        loading: boolean
+    }) {
     const [copied, setCopied] = useState(false);
-    const {tokenBalances, loading} = useTokens(publicKey);
 
     useEffect(() => {
         if(copied) {

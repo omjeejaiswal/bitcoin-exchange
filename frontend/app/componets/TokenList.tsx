@@ -1,9 +1,8 @@
-
-import { TokenWithBalance } from "../api/hooks/useTokens";
+import { TokenWithbalance } from "../api/hooks/useTokens"
 
 
 export function TokenList({tokens}: {
-    tokens: TokenWithBalance[]
+    tokens: TokenWithbalance[]
 }) {
     return <div>
         {tokens.map(t => <TokenRow key={t.name} token={t} />)}
@@ -11,7 +10,7 @@ export function TokenList({tokens}: {
 }
 
 function TokenRow({token}: {
-    token: TokenWithBalance
+    token: TokenWithbalance
 }) {
     return <div className="flex justify-between">
         <div className="flex">

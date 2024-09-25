@@ -1,25 +1,25 @@
 
+
 import { TokenDetails } from "@/app/lib/Tokens";
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
-export interface TokenWithBalance extends TokenDetails{
+export interface TokenWithbalance extends TokenDetails {
     balance: string;
     usdBalance: string;
 }
 
 export function useTokens(address: string) {
-    const [tokenBalances, setTokensBalance] = useState<{
+    const [tokenBalances, setTokenBalances] = useState<{
         totalBalance: number,
-        tokens: TokenWithBalance[]
-    } | null > (null);
-
+        tokens: TokenWithbalance[]
+    } | null >(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() =>{
+    useEffect(() => {
         axios.get(`/api/tokens?address=${address}`)
             .then(res => {
-                setTokensBalance(res.data);
+                setTokenBalances(res.data);
                 setLoading(false)
             })
     }, [])
@@ -28,3 +28,5 @@ export function useTokens(address: string) {
         loading, tokenBalances
     }
 }
+
+

@@ -1,8 +1,8 @@
 
 import { getServerSession } from "next-auth";
+import { authConfig } from "../lib/auth";
 import { ProfileCard } from "../componets/profileCard";
 import db from "@/app/db";
-import { authConfig } from "../lib/auth";
 
 async function getUserWallet() {
     const session = await getServerSession(authConfig);
@@ -18,7 +18,7 @@ async function getUserWallet() {
 
     if (!userWallet) {
         return {
-            error: "no wallet found associated to the user"
+            error: "No solana wallet found associated to the user"
         }
     }
     
@@ -29,7 +29,6 @@ export default async function Dashboard() {
     const userWallet = await getUserWallet();
 
     if (userWallet.error || !userWallet.userWallet?.publicKey) {
-        console.log(userWallet)
         return <>No solana wallet found</>
     }
 
